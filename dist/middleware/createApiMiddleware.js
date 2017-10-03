@@ -29,8 +29,8 @@ var _stringify = require('babel-runtime/core-js/json/stringify');
 var _stringify2 = _interopRequireDefault(_stringify);
 
 var handleResponse = function () {
-  var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(response) {
-    var _ref2, data, _ref2$included, included, _ref2$meta, meta;
+  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(response) {
+    var _ref2, data, _ref2$included, included, _ref2$meta, meta, _ref2$links, links;
 
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
@@ -46,9 +46,11 @@ var handleResponse = function () {
             included = _ref2$included === undefined ? [] : _ref2$included;
             _ref2$meta = _ref2.meta;
             meta = _ref2$meta === undefined ? {} : _ref2$meta;
+            _ref2$links = _ref2.links;
+            links = _ref2$links === undefined ? {} : _ref2$links;
 
             if (!data) {
-              _context.next = 10;
+              _context.next = 12;
               break;
             }
 
@@ -57,17 +59,19 @@ var handleResponse = function () {
               result: Array.isArray(data) ? data.map(function (r) {
                 return r.id;
               }) : data.id,
-              meta: meta
+              meta: meta,
+              links: links
             });
 
-          case 10:
+          case 12:
             return _context.abrupt('return', {
               resources: [],
               result: null,
-              meta: meta
+              meta: meta,
+              links: links
             });
 
-          case 11:
+          case 13:
           case 'end':
             return _context.stop();
         }
@@ -137,7 +141,7 @@ function createMiddleware(host, defaultHeaders) {
   };
 
   var requestAction = function () {
-    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(method) {
+    var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2(method) {
       var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
           resources = _ref4.resources,
           params = _ref4.params,
@@ -192,7 +196,7 @@ function createMiddleware(host, defaultHeaders) {
   return function (store) {
     return function (next) {
       return function () {
-        var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(action) {
+        var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(action) {
           var data;
           return _regenerator2.default.wrap(function _callee3$(_context3) {
             while (1) {
