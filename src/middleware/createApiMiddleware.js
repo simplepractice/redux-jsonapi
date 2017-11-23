@@ -78,6 +78,11 @@ function createMiddleware(host, defaultHeaders) {
     return response;
   };
 
+  const receiveData = (store, { resources }, { type, payload } = {}) => {
+    if (payload.options && payload.options.skipReceive) return;
+    store.dispatch(apiActions.receive(resources, type));
+  };
+
   const requestActions = {
     [apiActions.GET]: (options) => requestAction('GET', options),
     [apiActions.POST]: (options) => requestAction('POST', options),
@@ -90,7 +95,7 @@ function createMiddleware(host, defaultHeaders) {
       next(action);
 
       const data = await requestActions[action.type](action.payload);
-      store.dispatch(apiActions.receive(data.resources, action.type));
+      receiveData(store, data, action)
       return data;
     }
 

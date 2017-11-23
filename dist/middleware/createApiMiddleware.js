@@ -183,6 +183,17 @@ function createMiddleware(host, defaultHeaders) {
     };
   }();
 
+  var receiveData = function receiveData(store, _ref5) {
+    var resources = _ref5.resources;
+
+    var _ref6 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        type = _ref6.type,
+        payload = _ref6.payload;
+
+    if (payload.options && payload.options.skipReceive) return;
+    store.dispatch(apiActions.receive(resources, type));
+  };
+
   var requestActions = (_requestActions = {}, (0, _defineProperty3.default)(_requestActions, apiActions.GET, function (options) {
     return requestAction('GET', options);
   }), (0, _defineProperty3.default)(_requestActions, apiActions.POST, function (options) {
@@ -196,7 +207,7 @@ function createMiddleware(host, defaultHeaders) {
   return function (store) {
     return function (next) {
       return function () {
-        var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(action) {
+        var _ref7 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(action) {
           var data;
           return _regenerator2.default.wrap(function _callee3$(_context3) {
             while (1) {
@@ -215,7 +226,7 @@ function createMiddleware(host, defaultHeaders) {
                 case 4:
                   data = _context3.sent;
 
-                  store.dispatch(apiActions.receive(data.resources, action.type));
+                  receiveData(store, data, action);
                   return _context3.abrupt('return', data);
 
                 case 7:
@@ -229,8 +240,8 @@ function createMiddleware(host, defaultHeaders) {
           }, _callee3, _this);
         }));
 
-        return function (_x5) {
-          return _ref5.apply(this, arguments);
+        return function (_x6) {
+          return _ref7.apply(this, arguments);
         };
       }();
     };
