@@ -1,14 +1,15 @@
 import { camelize } from 'humps';
 
 function deserializeRelationships(resources = [], store) {
-  return resources
-    .map((resource) => deserializeRelationship(resource, store))
-    .filter((resource) => !!resource);
+  return resources.map((resource) => deserializeRelationship(resource, store));
 }
 
 function deserializeRelationship(resource = {}, store) {
-  if (resource && store[camelize(resource.type)] && store[camelize(resource.type)][resource.id]) {
-    return deserialize({ ...store[camelize(resource.type)][resource.id], meta: { loaded: true } }, store);
+  if (resource) {
+    const resourceType = camelize(resource.type)
+    if (store[resourceType] && store[resourceType][resource.id]) {
+      return deserialize({ ...store[resourceType][resource.id], meta: { loaded: true } }, store);
+    }
   }
 
   return deserialize({ ...resource, meta: { loaded: false } }, store);
@@ -17,26 +18,26 @@ function deserializeRelationship(resource = {}, store) {
 function deserialize({ id, type, attributes, relationships, meta }, store) {
   let resource = { _type: type, _meta: meta };
 
-  if (id) resource = { ...resource, id };
+  if (id) resource['id'] = id;
 
   if (attributes) {
     resource = Object.keys(attributes).reduce((resource, key) => {
-      return { ...resource, [camelize(key)]: attributes[key] };
+      resource[camelize(key)] = attributes[key];
+      return resource;
     }, resource);
   }
 
   if (relationships) {
     resource = Object.keys(relationships).reduce((resource, key) => {
-      return {
-        ...resource,
-        [camelize(key)]: () => {
-          if (Array.isArray(relationships[key].data)) {
-            return deserializeRelationships(relationships[key].data, store);
-          } else {
-            return deserializeRelationship(relationships[key].data, store)
-          }
-        },
+      const relatedResource = relationships[key].data;
+      resource[camelize(key)] = () => {
+        if (Array.isArray(relatedResource)) {
+          return deserializeRelationships(relatedResource, store);
+        } else {
+          return deserializeRelationship(relatedResource, store)
+        }
       };
+      return resource;
     }, resource);
   }
 
