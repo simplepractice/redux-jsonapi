@@ -55,16 +55,17 @@ function createMiddleware(host, defaultHeaders) {
 
     if (params) urlParts = [...urlParts, '?', queryString.stringify(params)];
 
-    if (options.formatURL) return options.formatURL(urlParts.join(''));
+    if (options.formatURL) return options.formatURL(urlParts);
     return urlParts.join('');
   };
 
   const requestAction = async (method, { resources, params, headers, options } = {}) => {
     const url = getURL(resources, params, options);
 
+    const data = options && options['batch'] ? resources : resources[resources.length - 1];
     let response = await fetch(url, {
       method,
-      body: ['POST', 'PATCH'].includes(method) ? serialize({ data: resources[resources.length - 1] }) : undefined,
+      body: ['POST', 'PATCH'].includes(method) ? serialize({ data }) : undefined,
       headers: {
         ...getDefaultHeaders(),
         ...defaultHeaders,

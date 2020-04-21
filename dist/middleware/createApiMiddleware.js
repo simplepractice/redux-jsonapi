@@ -136,7 +136,7 @@ function createMiddleware(host, defaultHeaders) {
 
     if (params) urlParts = [].concat((0, _toConsumableArray3.default)(urlParts), ['?', _qs2.default.stringify(params)]);
 
-    if (options.formatURL) return options.formatURL(urlParts.join(''));
+    if (options.formatURL) return options.formatURL(urlParts);
     return urlParts.join('');
   };
 
@@ -148,20 +148,21 @@ function createMiddleware(host, defaultHeaders) {
           headers = _ref4.headers,
           options = _ref4.options;
 
-      var url, response;
+      var url, data, response;
       return _regenerator2.default.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               url = getURL(resources, params, options);
-              _context2.next = 3;
+              data = options && options['batch'] ? resources : resources[resources.length - 1];
+              _context2.next = 4;
               return fetch(url, {
                 method: method,
-                body: ['POST', 'PATCH'].includes(method) ? serialize({ data: resources[resources.length - 1] }) : undefined,
+                body: ['POST', 'PATCH'].includes(method) ? serialize({ data: data }) : undefined,
                 headers: (0, _extends3.default)({}, getDefaultHeaders(), defaultHeaders, headers)
               });
 
-            case 3:
+            case 4:
               response = _context2.sent;
 
 
@@ -170,7 +171,7 @@ function createMiddleware(host, defaultHeaders) {
 
               return _context2.abrupt('return', response);
 
-            case 7:
+            case 8:
             case 'end':
               return _context2.stop();
           }
